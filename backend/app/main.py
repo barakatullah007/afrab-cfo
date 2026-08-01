@@ -1,13 +1,15 @@
 from fastapi import FastAPI
+
 from app.api.v1.health import router as health_router
+from app.core.config import settings
 
 app = FastAPI(
-    title="Afrab CFO API",
-    version="0.1.0",
-    description="AI-native Personal CFO Backend"
+    title=settings.app_name,
+    version=settings.app_version,
+    description="AI-native Personal CFO Backend",
 )
 
 app.include_router(
     health_router,
-    prefix="/api/v1"
+    prefix="/api/v1",
 )
