@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from app.models.account import Account
     from app.models.category import Category
     from app.models.budget import Budget
+    from app.models.goal import Goal
 from sqlalchemy import DateTime, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -81,6 +82,10 @@ class User(Base):
         cascade="all, delete-orphan",
     )
     budgets: Mapped[list["Budget"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    goals: Mapped[list["Goal"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )
