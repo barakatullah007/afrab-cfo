@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.api.v1.accounts import router as account_router
 from app.api.v1.auth import router as auth_router
+from app.api.v1.budgets import router as budget_router
 from app.api.v1.categories import router as category_router
 from app.api.v1.dashboard import router as dashboard_router
 from app.api.v1.health import router as health_router
@@ -36,6 +37,11 @@ app.include_router(
 
 app.include_router(
     transaction_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    budget_router,
     prefix="/api/v1",
 )
 

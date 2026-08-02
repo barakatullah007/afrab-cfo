@@ -8,8 +8,9 @@ from app.models.account import Account
 from app.models.category import Category
 from app.models.transaction import Transaction
 from app.models.user import User
+from app.schemas.dashboard_recent import DashboardRecentTransaction
 from app.schemas.dashboard_summary import DashboardSummary
-from app.schemas.dashboard_recent import RecentTransaction
+
 
 class DashboardService:
 
@@ -78,17 +79,21 @@ class DashboardService:
             monthly_expense=monthly_expense,
             savings=monthly_income - monthly_expense,
         )
+
     def get_recent_transactions(
-    self,
-    db: Session,
-    current_user: User,
-    ) -> list[RecentTransaction]:
+        self,
+        db: Session,
+        current_user: User,
+    ) -> list[DashboardRecentTransaction]:
 
         transactions = (
             db.query(
                 Transaction,
                 Account.name.label("account_name"),
+                Account.icon.label("account_icon"),
                 Category.name.label("category_name"),
+                Category.icon.label("category_icon"),
+                Category.color.label("category_color"),
             )
             .join(
                 Account,
@@ -109,14 +114,24 @@ class DashboardService:
         )
 
         return [
-            RecentTransaction(
+            DashboardRecentTransaction(
                 id=transaction.id,
                 merchant=transaction.merchant,
                 description=transaction.description,
                 amount=transaction.amount,
                 transaction_date=transaction.transaction_date,
-                account=account_name,
-                category=category_name,
+                category_name=category_name,
+                category_icon=category_icon,
+                category_color=category_color,
+                account_name=account_name,
+                account_icon=account_icon,
             )
-            for transaction, account_name, category_name in transactions
+            for (
+                transaction,
+                account_name,
+                account_icon,
+                category_name,
+                category_icon,
+                category_color,
+            ) in transactions
         ]

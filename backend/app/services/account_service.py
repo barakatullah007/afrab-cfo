@@ -36,7 +36,7 @@ class AccountService:
             user_id=current_user.id,
             name=account_data.name,
             type=account_data.type,
-            opening_balance=account_data.balance,
+            opening_balance=account_data.opening_balance,
             currency=account_data.currency,
             icon=account_data.icon,
             color=account_data.color,
@@ -76,6 +76,9 @@ class AccountService:
             return None
 
         account.name = account_data.name
+        account.type = account_data.type
+        account.opening_balance = account_data.opening_balance
+        account.currency = account_data.currency
         account.icon = account_data.icon
         account.color = account_data.color
 
