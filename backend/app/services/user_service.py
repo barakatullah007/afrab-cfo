@@ -15,14 +15,20 @@ class UserService:
         db: Session,
         email: str,
     ) -> User | None:
-        return self.repository.get_by_email(db, email)
+        return self.repository.get_by_email(
+            db,
+            email,
+        )
 
     def get_by_google_id(
         self,
         db: Session,
         google_id: str,
     ) -> User | None:
-        return self.repository.get_by_google_id(db, google_id)
+        return self.repository.get_by_google_id(
+            db,
+            google_id,
+        )
 
     def create_user(
         self,
@@ -38,7 +44,10 @@ class UserService:
             auth_provider="local",
         )
 
-        return self.repository.create(db, user)
+        return self.repository.save(
+            db,
+            user,
+        )
 
     def create_google_user(
         self,
@@ -59,4 +68,7 @@ class UserService:
             profile_picture=profile_picture,
         )
 
-        return self.repository.create(db, user)
+        return self.repository.save(
+            db,
+            user,
+        )

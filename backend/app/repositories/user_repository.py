@@ -5,7 +5,7 @@ from app.models.user import User
 
 class UserRepository:
 
-    def create(
+    def save(
         self,
         db: Session,
         user: User,

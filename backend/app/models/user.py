@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import relationship
-
 if TYPE_CHECKING:
     from app.models.transaction import Transaction
+    from app.models.account import Account
+    from app.models.category import Category
 from sqlalchemy import DateTime, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -62,8 +63,19 @@ class User(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default=text("now()"),
+        onupdate=text("now()"),
     )
     transactions: Mapped[list["Transaction"]] = relationship(
-    back_populates="user",
-    cascade="all, delete-orphan",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    
+    categories: Mapped[list["Category"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    
+    accounts: Mapped[list["Account"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
     )

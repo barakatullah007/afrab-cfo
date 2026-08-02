@@ -29,11 +29,17 @@ def create_transaction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return service.create_transaction(
-        db,
-        current_user,
-        transaction,
-    )
+    try:
+        return service.create_transaction(
+            db,
+            current_user,
+            transaction,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
 
 
 @router.get(
@@ -84,20 +90,27 @@ def update_transaction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    updated_transaction = service.update_transaction(
-        db,
-        transaction_id,
-        current_user,
-        transaction,
-    )
-
-    if updated_transaction is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Transaction not found",
+    try:
+        updated = service.update_transaction(
+            db,
+            transaction_id,
+            current_user,
+            transaction,
         )
 
-    return updated_transaction
+        if updated is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Transaction not found",
+            )
+
+        return updated
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
 
 
 @router.delete(
@@ -109,13 +122,13 @@ def delete_transaction(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    transaction = service.delete_transaction(
+    deleted = service.delete_transaction(
         db,
         transaction_id,
         current_user,
     )
 
-    if transaction is None:
+    if deleted is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Transaction not found",

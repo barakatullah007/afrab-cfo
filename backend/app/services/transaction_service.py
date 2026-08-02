@@ -23,8 +23,13 @@ class TransactionService:
 
         transaction = Transaction(
             user_id=current_user.id,
+            account_id=transaction_data.account_id,
+            category_id=transaction_data.category_id,
             description=transaction_data.description,
+            merchant=transaction_data.merchant,
             amount=transaction_data.amount,
+            notes=transaction_data.notes,
+            transaction_date=transaction_data.transaction_date,
         )
 
         return self.repository.save(
@@ -71,8 +76,13 @@ class TransactionService:
         if transaction is None:
             return None
 
+        transaction.account_id = transaction_data.account_id
+        transaction.category_id = transaction_data.category_id
         transaction.description = transaction_data.description
+        transaction.merchant = transaction_data.merchant
         transaction.amount = transaction_data.amount
+        transaction.notes = transaction_data.notes
+        transaction.transaction_date = transaction_data.transaction_date
 
         return self.repository.save(
             db,
