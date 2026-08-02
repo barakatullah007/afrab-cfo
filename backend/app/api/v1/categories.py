@@ -66,20 +66,27 @@ def update_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    updated = service.update_category(
-        db,
-        category_id,
-        current_user,
-        category,
-    )
-
-    if updated is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Category not found",
+    try:
+        updated = service.update_category(
+            db,
+            category_id,
+            current_user,
+            category,
         )
 
-    return updated
+        if updated is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Category not found",
+            )
+
+        return updated
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(exc),
+        )
 
 @router.delete(
     "/{category_id}",

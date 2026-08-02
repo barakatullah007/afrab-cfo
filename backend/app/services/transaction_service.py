@@ -1,7 +1,11 @@
 from sqlalchemy.orm import Session
 
+from app.models.account import Account
+from app.models.category import Category
 from app.models.transaction import Transaction
 from app.models.user import User
+from app.repositories.account_repository import AccountRepository
+from app.repositories.category_repository import CategoryRepository
 from app.repositories.transaction_repository import TransactionRepository
 from app.schemas.transaction import (
     TransactionCreate,
@@ -13,6 +17,8 @@ class TransactionService:
 
     def __init__(self):
         self.repository = TransactionRepository()
+        self.account_repository = AccountRepository()
+        self.category_repository = CategoryRepository()
 
     def create_transaction(
         self,
@@ -20,6 +26,13 @@ class TransactionService:
         current_user: User,
         transaction_data: TransactionCreate,
     ) -> Transaction:
+
+        self._validate_account_and_category(
+            db,
+            current_user.id,
+            transaction_data.account_id,
+            transaction_data.category_id,
+        )
 
         transaction = Transaction(
             user_id=current_user.id,
@@ -76,6 +89,13 @@ class TransactionService:
         if transaction is None:
             return None
 
+        self._validate_account_and_category(
+            db,
+            current_user.id,
+            transaction_data.account_id,
+            transaction_data.category_id,
+        )
+
         transaction.account_id = transaction_data.account_id
         transaction.category_id = transaction_data.category_id
         transaction.description = transaction_data.description
@@ -111,3 +131,38 @@ class TransactionService:
         )
 
         return transaction
+
+    def _validate_account_and_category(
+        self,
+        db: Session,
+        user_id: int,
+        account_id: int,
+        category_id: int,
+    ) -> tuple[Account, Category]:
+
+        account = self.account_repository.get_by_id(
+            db,
+            account_id,
+            user_id,
+        )
+
+        if account is None:
+            raise ValueError(
+                "Account not found."
+            )
+
+        category = self.category_repository.get_by_id(
+            db,
+            category_id,
+            user_id,
+        )
+
+        if category is None:
+            raise ValueError(
+                "Category not found."
+            )
+
+        return (
+            account,
+            category,
+        )

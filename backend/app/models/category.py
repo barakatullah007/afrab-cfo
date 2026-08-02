@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from app.models.user import User
     from app.models.transaction import Transaction
     from app.models.budget import Budget
+    from app.models.recurring_transaction import RecurringTransaction
 
 class Category(Base):
     __tablename__ = "categories"
@@ -79,6 +80,10 @@ class Category(Base):
         cascade="all, delete-orphan",
     )
     budgets: Mapped[list["Budget"]] = relationship(
+        back_populates="category",
+        cascade="all, delete-orphan",
+    )
+    recurring_transactions: Mapped[list["RecurringTransaction"]] = relationship(
         back_populates="category",
         cascade="all, delete-orphan",
     )

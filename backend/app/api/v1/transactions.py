@@ -36,10 +36,7 @@ def create_transaction(
             transaction,
         )
     except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(exc),
-        )
+        raise _transaction_http_exception(exc)
 
 
 @router.get(
@@ -107,10 +104,7 @@ def update_transaction(
         return updated
 
     except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(exc),
-        )
+        raise _transaction_http_exception(exc)
 
 
 @router.delete(
@@ -133,3 +127,21 @@ def delete_transaction(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Transaction not found",
         )
+
+
+def _transaction_http_exception(
+    exc: ValueError,
+) -> HTTPException:
+    if str(exc) in {
+        "Account not found.",
+        "Category not found.",
+    }:
+        return HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+
+    return HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=str(exc),
+    )

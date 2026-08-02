@@ -71,6 +71,17 @@ class CategoryService:
         if category is None:
             return None
 
+        existing = self.repository.get_by_name(
+            db,
+            current_user.id,
+            category_data.name,
+        )
+
+        if existing is not None and existing.id != category.id:
+            raise ValueError(
+                "Category already exists."
+            )
+
         category.name = category_data.name
         category.icon = category_data.icon
         category.color = category_data.color

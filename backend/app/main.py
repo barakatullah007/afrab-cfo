@@ -5,8 +5,14 @@ from app.api.v1.auth import router as auth_router
 from app.api.v1.budgets import router as budget_router
 from app.api.v1.categories import router as category_router
 from app.api.v1.dashboard import router as dashboard_router
+from app.api.v1.financial_intelligence import (
+    router as financial_intelligence_router,
+)
 from app.api.v1.goals import router as goal_router
 from app.api.v1.health import router as health_router
+from app.api.v1.recurring_transactions import (
+    router as recurring_transaction_router,
+)
 from app.api.v1.transactions import router as transaction_router
 from app.core.config import settings
 
@@ -48,6 +54,16 @@ app.include_router(
 
 app.include_router(
     goal_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    recurring_transaction_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    financial_intelligence_router,
     prefix="/api/v1",
 )
 

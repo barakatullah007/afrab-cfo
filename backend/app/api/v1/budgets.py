@@ -136,6 +136,12 @@ def delete_budget(
 def _budget_http_exception(
     exc: ValueError,
 ) -> HTTPException:
+    if str(exc) == "Category not found.":
+        return HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+
     if str(exc) == "Budget already exists.":
         return HTTPException(
             status_code=status.HTTP_409_CONFLICT,

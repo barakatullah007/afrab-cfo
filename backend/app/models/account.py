@@ -25,6 +25,7 @@ from app.enums.account import AccountType
 if TYPE_CHECKING:
     from app.models.user import User
     from app.models.transaction import Transaction
+    from app.models.recurring_transaction import RecurringTransaction
 
 
 class Account(Base):
@@ -91,6 +92,10 @@ class Account(Base):
     )
     
     transactions: Mapped[list["Transaction"]] = relationship(
+        back_populates="account",
+        cascade="all, delete-orphan",
+    )
+    recurring_transactions: Mapped[list["RecurringTransaction"]] = relationship(
         back_populates="account",
         cascade="all, delete-orphan",
     )

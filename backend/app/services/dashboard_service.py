@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from sqlalchemy import func
@@ -19,6 +20,28 @@ class DashboardService:
         db: Session,
         current_user: User,
     ) -> DashboardSummary:
+        now = datetime.now(UTC)
+        month_start = datetime(
+            now.year,
+            now.month,
+            1,
+            tzinfo=UTC,
+        )
+
+        if now.month == 12:
+            next_month_start = datetime(
+                now.year + 1,
+                1,
+                1,
+                tzinfo=UTC,
+            )
+        else:
+            next_month_start = datetime(
+                now.year,
+                now.month + 1,
+                1,
+                tzinfo=UTC,
+            )
 
         total_balance = (
             db.query(
@@ -47,6 +70,8 @@ class DashboardService:
             .filter(
                 Transaction.user_id == current_user.id,
                 Category.type == CategoryType.INCOME,
+                Transaction.transaction_date >= month_start,
+                Transaction.transaction_date < next_month_start,
             )
             .scalar()
         )
@@ -65,6 +90,8 @@ class DashboardService:
             .filter(
                 Transaction.user_id == current_user.id,
                 Category.type == CategoryType.EXPENSE,
+                Transaction.transaction_date >= month_start,
+                Transaction.transaction_date < next_month_start,
             )
             .scalar()
         )
