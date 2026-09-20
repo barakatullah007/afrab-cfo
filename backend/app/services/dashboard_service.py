@@ -11,9 +11,13 @@ from app.models.transaction import Transaction
 from app.models.user import User
 from app.schemas.dashboard_recent import DashboardRecentTransaction
 from app.schemas.dashboard_summary import DashboardSummary
+from app.services.account_balance_service import AccountBalanceService
 
 
 class DashboardService:
+
+    def __init__(self):
+        self.account_balance_service = AccountBalanceService()
 
     def get_summary(
         self,
@@ -21,6 +25,7 @@ class DashboardService:
         current_user: User,
     ) -> DashboardSummary:
         now = datetime.now(UTC)
+
         month_start = datetime(
             now.year,
             now.month,
@@ -43,17 +48,9 @@ class DashboardService:
                 tzinfo=UTC,
             )
 
-        total_balance = (
-            db.query(
-                func.coalesce(
-                    func.sum(Account.opening_balance),
-                    0,
-                )
-            )
-            .filter(
-                Account.user_id == current_user.id,
-            )
-            .scalar()
+        total_balance = self.account_balance_service.get_total_balance(
+            db=db,
+            user_id=current_user.id,
         )
 
         monthly_income = (

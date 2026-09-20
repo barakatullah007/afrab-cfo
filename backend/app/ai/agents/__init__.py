@@ -1,1 +1,1 @@
-"""Placeholder package for future AI agent implementations."""
+"""Planner-ready AI agent package."""

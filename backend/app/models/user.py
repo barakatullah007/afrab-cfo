@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import relationship
@@ -7,6 +9,7 @@ if TYPE_CHECKING:
     from app.models.category import Category
     from app.models.budget import Budget
     from app.models.goal import Goal
+    from app.models.transfer import Transfer
     from app.models.recurring_transaction import RecurringTransaction
 from sqlalchemy import DateTime, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -91,6 +94,10 @@ class User(Base):
         cascade="all, delete-orphan",
     )
     recurring_transactions: Mapped[list["RecurringTransaction"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    transfers: Mapped[list["Transfer"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )

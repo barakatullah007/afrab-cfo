@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from app.models.user import User
     from app.models.transaction import Transaction
     from app.models.recurring_transaction import RecurringTransaction
-
+    from app.models.transfer import Transfer
 
 class Account(Base):
     __tablename__ = "accounts"
@@ -98,4 +98,15 @@ class Account(Base):
     recurring_transactions: Mapped[list["RecurringTransaction"]] = relationship(
         back_populates="account",
         cascade="all, delete-orphan",
+    )
+    outgoing_transfers: Mapped[list["Transfer"]] = relationship(
+    foreign_keys="Transfer.source_account_id",
+    back_populates="source_account",
+    cascade="all, delete-orphan",
+    )
+
+    incoming_transfers: Mapped[list["Transfer"]] = relationship(
+    foreign_keys="Transfer.destination_account_id",
+    back_populates="destination_account",
+    cascade="all, delete-orphan",
     )

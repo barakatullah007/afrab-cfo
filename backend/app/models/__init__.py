@@ -5,3 +5,4 @@ from app.models.goal import Goal
 from app.models.recurring_transaction import RecurringTransaction
 from app.models.transaction import Transaction
 from app.models.user import User
+from app.models.transfer import Transfer

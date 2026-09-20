@@ -66,6 +66,32 @@ def verify(name, response, expected):
     return False
 
 
+def verify_ai_response(
+    name,
+    response,
+    expected_intent,
+    allowed_providers,
+):
+    if not verify(
+        name,
+        response,
+        200,
+    ):
+        return
+
+    body = response.json()
+
+    if body.get("intent") != expected_intent:
+        failure(name + " Intent", response, expected_intent)
+        return
+
+    if body.get("provider") not in allowed_providers:
+        failure(name + " Provider", response, allowed_providers)
+        return
+
+    success(name + " Body")
+
+
 def auth_headers():
     return {
         "Authorization": f"Bearer {TOKEN}",
@@ -659,6 +685,151 @@ verify(
     "Monthly Cashflow",
     monthly_cashflow,
     200,
+)
+
+print_title("AI Conversation")
+
+ai_financial_summary = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "Show me my financial summary",
+    },
+)
+
+verify_ai_response(
+    "AI Financial Summary",
+    ai_financial_summary,
+    "financial_summary",
+    {
+        "groq",
+        "fallback",
+    },
+)
+
+ai_budget_utilization = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "How is my budget utilization this month?",
+    },
+)
+
+verify_ai_response(
+    "AI Budget Utilization",
+    ai_budget_utilization,
+    "budget_utilization",
+    {
+        "groq",
+        "fallback",
+    },
+)
+
+ai_goal_progress = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "What is my goal progress?",
+    },
+)
+
+verify_ai_response(
+    "AI Goal Progress",
+    ai_goal_progress,
+    "goal_progress",
+    {
+        "groq",
+        "fallback",
+    },
+)
+
+ai_unknown = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "Can you recommend a movie for tonight?",
+    },
+)
+
+ai_financial_health = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "Am I financially healthy?",
+    },
+)
+
+verify_ai_response(
+    "AI Financial Health",
+    ai_financial_health,
+    "financial_health",
+    {
+        "groq",
+        "fallback",
+    },
+)
+
+ai_savings_advice = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "How much should I save every month?",
+    },
+)
+
+verify_ai_response(
+    "AI Savings Advice",
+    ai_savings_advice,
+    "savings_advice",
+    {
+        "groq",
+        "fallback",
+    },
+)
+
+ai_spending_advice = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "What should I reduce?",
+    },
+)
+
+verify_ai_response(
+    "AI Spending Advice",
+    ai_spending_advice,
+    "spending_advice",
+    {
+        "groq",
+        "fallback",
+    },
+)
+
+ai_goal_advice = requests.post(
+    f"{BASE_URL}/ai/chat",
+    headers=auth_headers(),
+    json={
+        "message": "Which goal should I prioritize?",
+    },
+)
+
+verify_ai_response(
+    "AI Goal Advice",
+    ai_goal_advice,
+    "goal_advice",
+    {
+        "groq",
+        "fallback",
+    },
+)
+
+verify_ai_response(
+    "AI Unknown Intent",
+    ai_unknown,
+    "unknown",
+    {
+        None,
+    },
 )
 
 print_title("Cleanup")

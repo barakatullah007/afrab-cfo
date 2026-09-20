@@ -58,18 +58,6 @@ class AccountService:
             current_user.id,
         )
 
-    def get_account(
-        self,
-        db: Session,
-        account_id: int,
-        current_user: User,
-    ) -> Account | None:
-        return self.repository.get_by_id(
-            db,
-            account_id,
-            current_user.id,
-        )
-
     def update_account(
         self,
         db: Session,
@@ -87,21 +75,7 @@ class AccountService:
         if account is None:
             return None
 
-        existing = self.repository.get_by_name(
-            db,
-            current_user.id,
-            account_data.name,
-        )
-
-        if existing is not None and existing.id != account.id:
-            raise ValueError(
-                "Account already exists."
-            )
-
         account.name = account_data.name
-        account.type = account_data.type
-        account.opening_balance = account_data.opening_balance
-        account.currency = account_data.currency
         account.icon = account_data.icon
         account.color = account_data.color
 

@@ -1,7 +1,12 @@
 from sqlalchemy.orm import Session
 
 from app.models.transaction import Transaction
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
+from app.enums.category import CategoryType
+from app.models.category import Category
+from app.models.transaction import Transaction
 
 class TransactionRepository:
 
@@ -53,3 +58,54 @@ class TransactionRepository:
     ) -> None:
         db.delete(transaction)
         db.commit()
+    def get_income_total_for_account(
+        self,
+        db: Session,
+        account_id: int,
+        user_id: int,
+    ):
+        return (
+            db.query(
+                func.coalesce(
+                    func.sum(Transaction.amount),
+                    0,
+                )
+            )
+            .join(
+                Category,
+                Transaction.category_id == Category.id,
+            )
+            .filter(
+                Transaction.account_id == account_id,
+                Transaction.user_id == user_id,
+                Category.type == CategoryType.INCOME,
+                Transaction.transaction_date <= func.now(),
+            )
+            .scalar()
+        )
+
+    def get_expense_total_for_account(
+        self,
+        db: Session,
+        account_id: int,
+        user_id: int,
+    ):
+        return (
+            db.query(
+                func.coalesce(
+                    func.sum(Transaction.amount),
+                    0,
+                )
+            )
+            .join(
+                Category,
+                Transaction.category_id == Category.id,
+            )
+            .filter(
+                Transaction.account_id == account_id,
+                Transaction.user_id == user_id,
+                Category.type == CategoryType.EXPENSE,
+                Transaction.transaction_date <= func.now(),
+            )
+            .scalar()
+        )
