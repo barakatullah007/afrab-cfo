@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.goal import Goal
     from app.models.transfer import Transfer
     from app.models.recurring_transaction import RecurringTransaction
+    from app.models.savings_allocation import SavingsAllocation
 from sqlalchemy import DateTime, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -98,6 +99,10 @@ class User(Base):
         cascade="all, delete-orphan",
     )
     transfers: Mapped[list["Transfer"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    savings_allocations: Mapped[list["SavingsAllocation"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )

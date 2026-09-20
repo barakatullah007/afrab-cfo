@@ -254,7 +254,26 @@ class FinancialIntelligenceService:
         db: Session,
         user_id: int,
     ) -> tuple[Decimal, Decimal]:
-        month_start, month_end = self._get_current_month_range()
+        month_start, _ = self._get_current_month_range()
+
+        return self.get_monthly_totals_for_month(
+            db,
+            user_id,
+            month_start.month,
+            month_start.year,
+        )
+
+    def get_monthly_totals_for_month(
+        self,
+        db: Session,
+        user_id: int,
+        month: int,
+        year: int,
+    ) -> tuple[Decimal, Decimal]:
+        month_start, month_end = self._get_month_range(
+            month,
+            year,
+        )
 
         rows = (
             db.query(
@@ -295,6 +314,38 @@ class FinancialIntelligenceService:
                 CategoryType.EXPENSE,
                 Decimal("0"),
             ),
+        )
+
+    def _get_month_range(
+        self,
+        month: int,
+        year: int,
+    ) -> tuple[datetime, datetime]:
+        month_start = datetime(
+            year,
+            month,
+            1,
+            tzinfo=UTC,
+        )
+
+        if month == 12:
+            next_month_start = datetime(
+                year + 1,
+                1,
+                1,
+                tzinfo=UTC,
+            )
+        else:
+            next_month_start = datetime(
+                year,
+                month + 1,
+                1,
+                tzinfo=UTC,
+            )
+
+        return (
+            month_start,
+            next_month_start,
         )
 
     def _count_goals(
@@ -345,31 +396,10 @@ class FinancialIntelligenceService:
 
     def _get_current_month_range(self) -> tuple[datetime, datetime]:
         now = datetime.now(UTC)
-        month_start = datetime(
-            now.year,
+
+        return self._get_month_range(
             now.month,
-            1,
-            tzinfo=UTC,
-        )
-
-        if now.month == 12:
-            next_month_start = datetime(
-                now.year + 1,
-                1,
-                1,
-                tzinfo=UTC,
-            )
-        else:
-            next_month_start = datetime(
-                now.year,
-                now.month + 1,
-                1,
-                tzinfo=UTC,
-            )
-
-        return (
-            month_start,
-            next_month_start,
+            now.year,
         )
 
     def _get_percentage(

@@ -15,6 +15,9 @@ from app.api.v1.health import router as health_router
 from app.api.v1.recurring_transactions import (
     router as recurring_transaction_router,
 )
+from app.api.v1.savings_allocations import (
+    router as savings_allocation_router,
+)
 from app.api.v1.transactions import router as transaction_router
 from app.core.config import settings
 from app.api.v1.memory import router as memory_router
@@ -72,6 +75,11 @@ app.include_router(
 
 app.include_router(
     recurring_transaction_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    savings_allocation_router,
     prefix="/api/v1",
 )
 

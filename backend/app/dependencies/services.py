@@ -9,6 +9,7 @@ from app.services.goal_service import GoalService
 from app.services.recurring_transaction_service import (
     RecurringTransactionService,
 )
+from app.services.savings_allocation_service import SavingsAllocationService
 from app.services.transaction_service import TransactionService
 from app.services.user_service import UserService
 
@@ -39,6 +40,10 @@ def get_goal_service() -> GoalService:
 
 def get_recurring_transaction_service() -> RecurringTransactionService:
     return RecurringTransactionService()
+
+
+def get_savings_allocation_service() -> SavingsAllocationService:
+    return SavingsAllocationService()
 
 
 def get_transaction_service() -> TransactionService:

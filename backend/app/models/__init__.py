@@ -3,6 +3,7 @@ from app.models.budget import Budget
 from app.models.category import Category
 from app.models.goal import Goal
 from app.models.recurring_transaction import RecurringTransaction
+from app.models.savings_allocation import SavingsAllocation
 from app.models.transaction import Transaction
 from app.models.user import User
 from app.models.transfer import Transfer
